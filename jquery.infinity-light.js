@@ -80,7 +80,7 @@
             },
             clearBox: function(direction)
             {
-                $('#img > img').css({'opacity': 0})
+                $('#img > img').css({'opacity': 0}).parent().empty();
             }
         }, options || {});
 
@@ -125,6 +125,16 @@
                     '-o-transition': 'all '+speed+'ms ease 0s',
                     'transition': 'all '+speed+'ms ease 0s'
                 }
+        }
+
+        var keydown = function(e)
+        {
+            if( e.keyCode === 37 )
+            {
+                prev();
+            } else if( e.keyCode === 39 ) {
+                next();
+            }
         }
 
         var imageProcess = function(image, margin)
@@ -265,6 +275,11 @@
             $(window).off('resize', resize);
 
             $(window).on('resize', resize);
+
+
+            $(document).off('keydown', keydown);
+
+            $(document).on('keydown', keydown);
 
         });   
 
