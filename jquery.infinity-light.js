@@ -307,13 +307,17 @@
             var x = touch.clientX,
                 dx;
 
-            dx = ( x > originalPosition ) ? "right" : "left";
+            dx = Math.abs( x - originalPosition );
 
-            if( dx == 'right' )
+            if( dx > $(window).width()*0.05 )
             {
-                prev();
-            } else {
-                next();
+                var dirx = ( x > originalPosition ) ? "right" : "left";
+                if( dirx == 'right' )
+                {
+                    prev();
+                } else {
+                    next();
+                }
             }
 
         });
