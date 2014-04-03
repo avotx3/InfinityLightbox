@@ -14,5 +14,5 @@ About lightbox:
 3. Support swipe on devices with sensor input.
 4. Support arrow keys control on devices with physical keyboard.
 5. Based on css3 transactions and transforms - full hardware accelerated and very fast everywhere.
-6. Simple for use: jQuery(el).infinityLightbox(); by default and it work.
+6. Simple for use: ```jQuery(el).infinityLightbox();``` by default and it work.
 
