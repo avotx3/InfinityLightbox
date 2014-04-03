@@ -12,6 +12,7 @@ About lightbox:
 1. Fantastic small - about 10Kb minifed .js and .css and nothing else.
 2. Ready for mobile use out of the box, responsive and adaptive. 
 3. Support swipe on devices with sensor input.
-4. Based on css3 transactions and transforms - full hardware accelerated and very fast everywhere.
-5. Simple for use: jQuery(el).infinityLightbox(); by default and it work.
+4. Support arrow keys control on devices with physical keyboard.
+5. Based on css3 transactions and transforms - full hardware accelerated and very fast everywhere.
+6. Simple for use: jQuery(el).infinityLightbox(); by default and it work.
 
