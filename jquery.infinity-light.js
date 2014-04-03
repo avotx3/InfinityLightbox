@@ -8,22 +8,27 @@
 
         $this = $(element);
 
-        var template = '<div id="lightbox-overlay">'
-                    +'<div id="lightbox-close"></div>'
-                    +'<div id="img-wrapper">'
-                    +'<div id="left-control">'
+        var template = '<div id="inflo">'
+                    +'<div id="inflc"></div>'
+                    +'<div id="infllc">'
                     +'<div class="arrow left"></div></div>'
-                    +'<div id="img"></div>'
-                    +'<div id="right-control">'
+                    +'<div id="inflrc">'
                     +'<div class="arrow right"></div></div>'
-                    +'<div id="helper">'
-                    +'<div id="helper-text"></div>'
+                    +'<div id="infliw">'
+                    +'<div id="infli"></div>'
+                    +'<div id="inflh">'
+                    +'<div id="inflht"></div>'
                     +'</div></div>'
-                    +'<div id="img-loading"><div class="spinner">'
+                    +'<div id="inflil"><div class="spinner">'
                     +'<div class="bounce1"></div>'
                     +'<div class="bounce2"></div>'
                     +'<div class="bounce3"></div>'
                     +'</div></div></div>';
+
+        var byId = function(id)
+        {
+            return $(document.getElementById(id));
+        };
 
         var isMobile = {
             Android: function() {
@@ -51,8 +56,7 @@
         number = 0;
         
         var settings = $.extend({
-            caption1: 'Изображение',
-            caption2: 'из',
+            caption: 'Изображение $a из $b',
             margin: 100,
             marginMobile: 10,
             speed1: 200,
@@ -61,40 +65,45 @@
             helperType: 'number',
             animateImage: function(width, height, margin, direction)
             {
-                var box = $('#img-wrapper');
+                var box = byId('infliw');
 
-                if( box.width() == Math.floor(width) && box.height() == Math.floor(height))
+                if( box.width() == Math.floor(width) && box.height() == Math.floor(height) )
                 {
-                    $('#img-loading').hide();
-                    $('#img > img').css({'opacity': 1});
+                    byId('#inflil').hide();
+                    $('#infli > img').css({'opacity': 1});
                 } else {
                     box.css(
                         {'margin-top': margin, 'width': Math.floor(width), 'height': Math.floor(height)}
                     )
                     .on('webkitTransitionEnd transitionend oTransitionEnd otransitionend MSTransitionEnd', function()
                     {
-                        $('#img-loading').hide();
-                        $('#img > img').css({'opacity': 1});
+                        byId('inflil').hide();
+                        $('#infli > img').css({'opacity': 1});
                     });
                 }
             },
             clearBox: function(direction)
             {
-                $('#img > img').css({'opacity': 0}).parent().empty();
+                var img = $('#infli > img');
+                if(img != null && img != 'underfined')
+                {
+                    img.css({'opacity': 0});
+                    byId('infli').empty();
+                }
             }
         }, options || {});
 
         var resize = function()
         {
             direction = '';
-            var margin = $('#img > img').attr('data-margin');
-            imageProcess($('#img > img').get(0), margin);
+            var margin = $('#infli > img').attr('data-margin');
+            imageProcess($('#infli > img').get(0), margin);
         }
 
         var prev = function()
         {
-            var context = $('#img > img').attr('data-context');
-            var link = $('#'+context+' a[data-img="'+$('#img > img').attr('src')+'"]').prev();
+            var context = $('#infli > img').attr('data-context');
+            var link = $('#'+context+' a[data-img="'+$('#infli > img').attr('src')+'"]').prev();
             link.children('img').data('direction', 'prev');
             link.children('img').click();
             $(document).trigger('infinity-prev');
@@ -102,8 +111,8 @@
 
         var next = function()
         {
-            var context = $('#img > img').attr('data-context');
-            var link = $('#'+context+' a[data-img="'+$('#img > img').attr('src')+'"]').next();
+            var context = $('#infli > img').attr('data-context');
+            var link = $('#'+context+' a[data-img="'+$('#infli > img').attr('src')+'"]').next();
             link.children('img').data('direction', 'next');
             link.children('img').click();
             $(document).trigger('infinity-next');
@@ -112,7 +121,7 @@
         var close = function()
         {
             $this.find('a > img').data('direction', '');
-            $('#lightbox-overlay').hide();
+            $('#inflo').hide();
             $('body').css({'overflow-y':'scroll'});
             $(document).trigger('infinity-close');
         }
@@ -156,6 +165,16 @@
                 imgHeight = imgWidth/aspect;
             }
 
+            if( imgWidth > wWidth )
+            {
+                imgWidth = wWidth;
+                imgHeight = imgWidth/aspect;
+            } else if( imgHeight > wHeight )
+            {
+                imgHeight = wHeight;
+                imgWidth = imgHeight*aspect;
+            }
+
             marginTop = (-1)*imgHeight/2-4;
             
             $(image)
@@ -164,7 +183,7 @@
             .attr('data-margin', margin)
             .attr('data-context', $this.context.id)
             .css(imgTrans);
-            $('#img')
+            byId('infli')
             .empty()
             .append(image);
 
@@ -173,7 +192,7 @@
 
         $this.data('settings', settings);
         
-        if( $('#lightbox-overlay').length == 0 )
+        if( byId('inflo').length == 0 )
         {
             $('body').append(template);
         }
@@ -190,14 +209,11 @@
             var settings = $this.data('settings'),
                 links;
 
-            $('#img-wrapper, #img').css(transition(settings.speed1));
+            $('#infliw, #infli').css(transition(settings.speed1));
 
             direction = $(e.target).data('direction') || '';
 
             $(document).trigger('infinity-open');
-
-            wHeight = $(window).height();
-            wWidth = $(window).width();
 
             e.preventDefault();
             e.stopPropagation ? e.stopPropagation() : (e.cancelBubble=true);
@@ -206,17 +222,18 @@
 
             if( isMobile.any() )
             {
-                $('#left-control, #right-control').addClass('mobile');
-                $('#lightbox-overlay').css({'background-color':'#000'});
-                $('#lightbox-close').show();
+                $('#infllc, #inflrc').addClass('mobile');
+                byId('inflo').css({'background-color':'#000'});
+                byId('inflc').show();
             }
 
-            $('#right-control, #left-control').css({'opacity': '1'}).show();
+            $('#inflrc, #infllc').css({'opacity': '1'}).show();
 
             settings.clearBox(direction);
-            $('#lightbox-overlay').show();
-            $('#img-loading').show();
-            $('#helper').show();
+
+            byId('inflo').show();
+            byId('inflil').show();
+            byId('inflh').show();
 
             links = $this.find('a[data-img]');
 
@@ -229,28 +246,28 @@
 
             if(number == length-1)
             {
-                $('#right-control').css({'opacity': '0'}).hide();
+                $('#inflrc').css({'opacity': '0'}).hide();
             }
             if(number == 0)
             {
-                $('#left-control').css({'opacity': '0'}).hide();
+                $('#infllc').css({'opacity': '0'}).hide();
             }
             if( settings.helper === true )
             {
                 if( settings.helperType == 'number' )
                 {
-                    $('#helper-text').text(settings.caption1+' '+(number+1)+' '+settings.caption2+' '+length);
+                    $('#inflht').text(settings.caption.replace('$a', (number+1)).replace('$b', length));
                 } else if( settings.helperType == 'alt' ) {
                     var alt = $(e.target).attr('alt') || '';
                     if( alt !== '' )
                     {
-                        $('#helper-text').text(alt);
+                        byId('inflht').text(alt);
                     } else {
-                        $('#helper').hide();
+                        byId('inflh').hide();
                     }
                 }
             } else {
-                $('#helper').hide();
+                byId('inflh').hide();
             }
 
             if( isMobile.any() )
@@ -265,7 +282,7 @@
                 imageProcess(images[number], margin);
             } else {
                 image = new Image();
-                image.src = $(links.get(number)).attr('data-img');
+                image.src = links[number].getAttribute('data-img');
                 $(image).load(function(){
                     images[number] = image;
                     imageProcess(image, margin);
@@ -283,33 +300,33 @@
 
         });   
 
-        $('#right-control').unbind('click');
+        byId('inflrc').off('click');
         
-        $('#right-control').click(next);
+        byId('inflrc').on('click', next);
 
-        $('#left-control').unbind('click');
+        byId('infllc').off('click');
 
-        $('#left-control').click(prev);
+        byId('infllc').on('click', prev);
 
-        $('#img').off('touchmove');
-        $('#img').off('touchstart');
+        byId('infli').off('touchmove');
+        byId('infli').off('touchstart');
 
-        $('#img').on('touchstart', function(e)
+        byId('infli').on('touchstart', function(e)
         {
             var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
             originalPosition = touch.clientX;
         })
 
-        $('#img').on('touchmove', function(e)
+        byId('infli').on('touchmove', function(e)
         {
 
             var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
             var x = touch.clientX,
                 dx;
 
-            dx = ( x > originalPosition ) ? "right" : "left";
+            dx = ( x > originalPosition ) ? 'right' : 'left';
 
-            if( dx == 'right' )
+            if( dx === 'right' )
             {
                 prev();
             } else {
@@ -318,15 +335,15 @@
 
         });
 
-        $('#lightbox-overlay').click(function(e)
+        byId('inflo').click(function(e)
         {
-            if($(e.target).attr('id') === 'lightbox-overlay')
+            if($(e.target).attr('id') === 'inflo')
             {
                 close();
             }
         });
 
-        $('#lightbox-close').click(close);
+        byId('inflc').click(close);
     };
 
     $.fn.infinityLightbox = function(options)
@@ -343,4 +360,4 @@
         });
     };
 
-}( jQuery ));
+}) ( window.jQuery);
