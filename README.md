@@ -16,3 +16,17 @@ About lightbox:
 5. Based on css3 transactions and transforms - full hardware accelerated and very fast everywhere.
 6. Simple for use: ```jQuery(el).infinityLightbox();``` by default and it work.
 
+Settings:
+
+```
+jQuery(el).infinityLightbox({
+  'margin': 100, // Margin on desktop
+  'marginMobile': 10, // Margin on mobile
+  'speed1': 200, // Resizing anomation speed
+  'speed2': 200, // Image opacity change animation speed
+  'caption': 'Изображение $a из $b', // Caption string, $a,$b replace with index and number of images
+  'helper': true, // Show or hide helper
+  'helperType': 'number', // Helper type 'number' for 'caption' and 'alt' for alt attr of miniature image
+  'animateImage': function() // Programm animation of image emersion
+});
+```
